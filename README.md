@@ -46,6 +46,16 @@ We would like this endpoint to be compatible with three currencies:
 * JPY
 * EUR
 
+## Run the tests
+
+`gradle check`
+
+## Run the application
+
+`gradle bootRun`
+
+Application will be listening on port: `18801`
+
 ## What we are looking for
 
 * How you adapt to an unknown code base
