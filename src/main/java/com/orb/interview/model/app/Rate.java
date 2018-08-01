@@ -60,6 +60,9 @@ public class Rate {
     }
   }
 
+  // We retrieve the rate for currencies and the reversed exchange.
+  // TODO: We could retrieve all the supported exchanges on each API call;
+  // that might save many API calls.
   public Float getRate(String currencies) throws UnsupportedCurrencyException, Exception {
     if (!Arrays.asList(validCurrencies).contains(currencies)) {
       throw new UnsupportedCurrencyException();
@@ -70,7 +73,7 @@ public class Rate {
       return rate;
     } else {
       StringBuilder result = new StringBuilder();
-      String uri = uriEndpoint + "?pairs=" + currencies + "&api_key=" + apiKey;
+      String uri = uriEndpoint + "?pairs=" + currencies + "," + reversedCurrencies(currencies) + "&api_key=" + apiKey;
       URL url = new URL(uri);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
@@ -83,11 +86,14 @@ public class Rate {
 
       ObjectMapper mapper = new ObjectMapper();
       System.out.println(">>> result: " + result.toString());
-      // 1forge API returns a JSON array: we must drop the leading/trailing square brackets.
-      String jsonInString = result.toString().substring(1,result.toString().length() - 1);
-      HashMap obj = mapper.readValue(jsonInString, HashMap.class);
-      rate = new Float(obj.get("price").toString());
+      String jsonString = result.toString();
+      HashMap[] jsonArr = mapper.readValue(jsonString, HashMap[].class);
+      Float rate_reversed;
+      rate = new Float(jsonArr[0].get("price").toString());
+      rate_reversed = new Float(jsonArr[1].get("price").toString());
+
       update(currencies, rate, false);
+      update(reversedCurrencies(currencies), rate_reversed, false);
       return rate;
     }
   }
@@ -95,19 +101,13 @@ public class Rate {
   // Update the reversed exchange as well, i.e. USD -> JPY and JPY -> USD.
   private void update(String currencies, Float rate, Boolean useCache) throws ArithmeticException{
     HashMap<String, Object> currencyMap = new HashMap<String, Object>();
-    HashMap<String, Object> reversedCurrencyMap = new HashMap<String, Object>();
     currencyMap.put("rate", rate);
-    reversedCurrencyMap.put("rate", new Float(1.0) / rate);
-    String reversedCurrencies = reversedCurrencies(currencies);
     if (useCache) {
       currencyMap.put("timestamp", getTimestamp(currencies));
-      reversedCurrencyMap.put("timestamp", getTimestamp(reversedCurrencies));
     } else {
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       currencyMap.put("timestamp", timestamp.getTime() / 1000);
-      reversedCurrencyMap.put("timestamp", timestamp.getTime() / 1000);
     }
     rates.put(currencies, currencyMap);
-    rates.put(reversedCurrencies, reversedCurrencyMap);
   }
 }
