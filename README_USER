@@ -1,0 +1,12 @@
+### Start APP ###
+gradle bootRun
+
+### Create User ###
+curl --header "Content-Type: application/json" -X POST --data '{"email":"YOUR-EMAIL","password":"YOUR-PASSWORD"}' 'http://localhost:18801/users'
+
+### Get Token ###
+curl --header "Content-Type: application/json" -X POST --data '{"email":"YOUR-EMAIL","password":"YOUR-PASSWORD"}' 'http://localhost:18801/users/login'
+==> TOKEN
+
+### Do an API request (Use previous TOKEN) ###
+curl --header 'X-Auth-Token: TOKEN' 'http://localhost:18801/rates?from=JPY&to=EUR'
