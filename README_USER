@@ -1,3 +1,7 @@
+### DB must exist ###
+A database 'interview' must exit.  If not, just create one with command:
+|mysql> create database interview;
+
 ### Start APP ###
 gradle bootRun
 
