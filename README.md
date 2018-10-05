@@ -6,4 +6,6 @@ The skeleton of the Spring project is given; the candidate
 must implement the new service following the requirements
 included in README.orig.
 
+README_USER contains instructions on how to test the new service.
+
 This is an exercise that I performed for a company.
