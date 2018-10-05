@@ -14,3 +14,7 @@ curl --header "Content-Type: application/json" -X POST --data '{"email":"YOUR-EM
 
 ### Do an API request (Use previous TOKEN) ###
 curl --header 'X-Auth-Token: TOKEN' 'http://localhost:18801/rates?from=JPY&to=EUR'
+==> {"rate":0.00763024}
+
+curl --header 'X-Auth-Token: TOKEN' 'http://localhost:18801/rates?from=EUR&to=JPY'
+===> {"rate":131.0575}
